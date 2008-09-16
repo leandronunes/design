@@ -1,0 +1,6 @@
+in order of priority
+
+* finish (implement and test) the design editor (Editor and Editor::Helper)
+* add some default templates, themes and icon_thems to resources/designs/
+* rewrite all the tests using mocha instead of workarounds like
+  SampleHolderForTestingProxyDesignHolder in test/test_helper.rb

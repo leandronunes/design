@@ -1,0 +1,28 @@
+Description:
+    The design_block generator creates stubs for a new design_block.
+
+    The generator takes a design_block name as its argument.  The model name may be given in CamelCase or under_score.
+
+    As additional parameters, the generator will take the attributes and use it to define which views are going to be
+    created on the folder views of the design_block.
+
+    The generator creates a model class in app/design_blocks/models, a controller in app/design_blocks/controllers and 
+    views in app/design_blocks/views.
+
+Examples:
+    ./script/generate design_block FavoriteLinks
+
+        This will create an FavoriteLinks design_block :
+            Model:        app/design_blocks/favorite_links/models/favorite_links.rb
+            Controller:   app/design_blocks/favorite_links/controllers/favorite_links_controller.rb
+            Views:        app/design_blocks/favorite_links/views/index.rhtml
+                          app/design_blocks/favorite_links/views/edit.rhtml
+
+    ./script/generate model logged_users index, edit, show
+
+        This will create an LoggedUsers design_block :
+            Model:        app/design_blocks/logged_users/models/logged_users.rb
+            Controller:   app/design_blocks/logged_users/controllers/logged_users_controller.rb
+            Views:        app/design_blocks/logged_users/views/index.rhtml
+                          app/design_blocks/logged_users/views/show.rhtml
+                          app/design_blocks/logged_users/views/edit.rhtml

@@ -1,0 +1,7 @@
+<h2><%= _('Change icon theme') %></h2>
+
+<div>
+<% for icon_theme in @icon_themes do %>
+    <%= link_to(design_thumbnail_for(icon_theme), { :action => :design_editor, :icon_theme => icon_theme.name, :destiny_action => params[:action] }, :method => 'post') %>
+<% end %>
+</div>

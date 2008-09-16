@@ -1,0 +1,4 @@
+# FIXME this rjs file it's not working.
+# It could be called on action 'design_editor_add_block' on file lib/desing/editor.rb
+#page.replace(design_id_for_box(@box), design_editor_box(@box))
+#page.replace('design_editor_make_sortable', design_editor_make_sortable)

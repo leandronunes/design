@@ -1,0 +1,5 @@
+page.replace(design_id_for_block_content(@design_block), 
+  content_tag(:div, @action_content, :id => design_id_for_block_content(@design_block))
+)
+
+page.replace(design_id_for_block_header(@design_block), design_editor_block_header(@design_block) )

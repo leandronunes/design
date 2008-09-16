@@ -1,0 +1,7 @@
+<h2><%= _('Change template') %></h2>
+
+<div>
+<% for template in @templates do %>
+    <%= link_to(design_thumbnail_for(template), { :action => :design_editor, :template => template.name, :destiny_action => params[:action] }, :method => 'post') %>
+<% end %>
+</div>
