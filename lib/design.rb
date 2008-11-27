@@ -42,7 +42,7 @@ module Design
       end
     end
 
-    raise "You must have at least the interface defined" if interface_holder.blank?
+#    raise "You must have at least the interface defined" if interface_holder.blank?
 
     data[:design] = DesignHolder.new(interface_holder, content_holder)
 

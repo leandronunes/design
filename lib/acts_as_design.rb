@@ -52,10 +52,11 @@ class ActiveRecord::Base
       @public_filesystem_root
     end
 
-    def design_data
-      self[:design_data] ||= Hash.new
+    def initialize(*args)
+      super(args)
+      self.design_data ||= Hash.new
     end
-    
+
     def template # :nodoc:
       self.design_data[:template] || 'default'
     end
