@@ -8,5 +8,5 @@ class DesignMigrationGenerator < Rails::Generator::Base
   def file_name
     "design_migration"
   end
-end
 
+end

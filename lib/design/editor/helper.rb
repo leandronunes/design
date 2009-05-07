@@ -33,21 +33,21 @@ module Design
           [
             content_tag(:li, 
               link_to( 
-                content_tag(:span, _('Change template')), 
+                content_tag(:span, t(:label_change_template)), 
                 params.merge(:action => 'design_editor_change_template'), 
                 :id => 'design_change_template'
               ), 
               :class => 'design_change_item'
             ),
             content_tag(:li, 
-              link_to( content_tag(:span, _('Change block theme')), 
+              link_to( content_tag(:span, t(:label_change_block_theme)), 
                 params.merge(:action => 'design_editor_change_theme'),
                 :id => 'design_change_block_theme'
               ), 
               :class => 'design_change_item'
             ),
             content_tag(:li, 
-              link_to( content_tag(:span, _('Change icon theme')), 
+              link_to( content_tag(:span, t(:label_change_icon_theme)), 
                 params.merge(:action => 'design_editor_change_icon_theme'),
                 :id => 'design_change_icon_theme'
               ), 
@@ -64,7 +64,7 @@ module Design
         block_types = design_editor_blocksbar
         links = design_editor_toolbar
         content_tag('div',
-                    block_types +  content_tag(:h3, _('Toolbar')) + links,
+                    block_types +  content_tag(:h3, t(:label_toolbar)) + links,
                     :id => 'design_editor_toolbar')
       end
 
@@ -76,7 +76,7 @@ module Design
               link_to_remote(
                 content_tag(:span, block.constantize.description ),  
                 :url => {:action => 'design_editor_add_block', :type => block},
-                :failure => "alert(request.responseText)"
+                :failure => "$('design_editor').innerHTML=request.responseText"
               ),
               {:id => "design_editor_blocksbar_item_#{block}", :class => 'design_editor_blocksbar_item'}
             )
@@ -124,7 +124,7 @@ module Design
             design_editor_block_content(block, content),
             design_editor_block_footer(block)
           ].join("\n"),
-          :class => "design_block_type #{block.class.name.underscore}"
+          :class => "design_block_type #{block.controller_name.underscore}"
         )
       end
 
@@ -134,7 +134,7 @@ module Design
 
       def design_editor_block_header_full(block)
         design_editor_block_controls(block) + 
-        ("#{block.class.name}Controller".constantize.constants.include?('CONTROL_ACTION_OPTIONS') ?  design_editor_block_control_options(block) : '') +
+        (block.controller_full_name.constantize.constants.include?('CONTROL_ACTION_OPTIONS') ?  design_editor_block_control_options(block) : '') +
         design_editor_block_header(block)
       end
 
@@ -144,21 +144,26 @@ module Design
             block.class == Design::MainBlock ? nil :
             content_tag(:li,
               link_to_remote(
-                content_tag(:span, _('Remove')),
+                content_tag(:span, t(:label_remove)),
+#                content_tag(:span, block.controller_name.underscore + '_path'),
                 {
-                  :url => params.merge({:controller => block.class.name.underscore, :action => 'design_editor_destroy_block', :block_id => block.id }),
+#                  :url => params.merge({:controller => block.controller_name.underscore, :action => 'design_editor_destroy_block', :block_id => block.id }),
+#                  :url => block.controller_name.underscore + '_path',
+                  :url => self.send("#{block.class.name.underscore}_path",block),
+#                  :url => admin_favorite_link_path(block),
+#                  :url => favorite_link_path(block),
                   :success => visual_effect(:fade, design_id_for_block(block)),
-                  :method => 'post',
+                  :method => :delete,
                   :failure => "$('#{design_id_for_block(block)}').innerHTML= request.responseText" 
                 },
                 { :class => 'design_button_block button_block_remove' }
               )
             ),
 
-           if "#{block.class.name}Controller".constantize.constants.include?('CONTROL_ACTION_OPTIONS')
+           if block.controller_full_name.constantize.constants.include?('CONTROL_ACTION_OPTIONS')
              content_tag(:li,
                 link_to_function(
-                  content_tag(:span, _('Options') ),
+                  content_tag(:span, t(:label_options) ),
                   {
                     :onclick => visual_effect(:toggle_appear, design_id_for_block_control_options(block), :duration => 0.6),
                     :class => 'design_button_block button_block_options' 
@@ -177,13 +182,15 @@ module Design
         content_tag(:div,
           content_tag(:div,
             content_tag(:ul,
-              "#{block.class.name}Controller".constantize::CONTROL_ACTION_OPTIONS.map do |k,v|
+              block.controller_full_name.constantize::CONTROL_ACTION_OPTIONS.map do |k,v|
                 content_tag(:li,
                   link_to_remote(
                     content_tag(:span, v ),
                     {
-                      :url => params.merge({:controller => block.class.name.underscore, :action => k, :block_id => block.id }),
-                      :method => 'post',
+#                      :url => params.merge({:controller => block.controller_name.underscore, :action => k, :block_id => block.id }),
+#                      :url => self.send("#{k}_#{block.class.name.pluralize.underscore}_path",block),
+                      :url => self.design_block_action_link(block, k),
+                      :method => :get,
                       :failure => "$('#{design_id_for_block_content(block)}').innerHTML= request.responseText"
                     },
                     { :class => 'design_button_block button_block_item_options' }
@@ -197,15 +204,23 @@ module Design
         )
       end
 
+      #FIXME The block cannot have same actions as collection and member on 
+      # CONTROL_ACTION_OPTIONS
+      # EX: manage_links action and manage_link action
+      # The system always call manage_links action
+      def design_block_action_link(block, action = nil)
+        self.send("#{block.member_link(action)}", block)
+      end
+
       def design_editor_block_header(block)
-        content_tag(:h3, block.title || _('(no title)'),{:class => 'design_block_header', :id => design_id_for_block_header(block) } )
+        content_tag(:h3, block.title || t(:label_no_title),{:class => 'design_block_header', :id => design_id_for_block_header(block) } )
       end
 
       def design_editor_block_content(block, content = nil)
         content_tag(:div,
           content_tag(:div,
             block.main? ? 
-            (_('(main content)')) :
+            (t(:label_main_content)) :
             (content.blank? ? block.class.description : content)
           ),
           :id => design_id_for_block_content(block), :class => "design_block_content"

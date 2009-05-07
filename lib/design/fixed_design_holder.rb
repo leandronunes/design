@@ -5,6 +5,7 @@ module Design
     @@public_filesystem_root = ''
 
     attr_reader :template, :theme, :icon_theme, :boxes
+
     def initialize(options = {})
       @template = options[:template] || 'default'
       @theme = options[:theme] || 'default'

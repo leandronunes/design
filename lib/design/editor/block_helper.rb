@@ -1,6 +1,6 @@
 module Design
-
-  module BlockEditHelper
+  module Editor
+    module BlockHelper
 
 #FIXME See if it's a good idea
 #We have to guarantee that the options for url has the params:
@@ -20,12 +20,29 @@ module Design
 #      end
 #    end
 
-    def design_form_remote_tag(options = {},&block) 
-      options[:failure] = "$('#{design_id_for_block(@design_block)}').innerHTML= request.responseText" # "alert(request.responseText)"
-      options[:url].merge!({:controller => @design_block.class.name.underscore, :block_id => @design_block})
-      form_remote_tag(options, &block)
-    end
- 
-  end # END OF module BlockHelper
+#FIXME Make this test
 
+#        def design_form_remote_tag(options = {},&block) 
+## <% 
+##form_remote_for(@design_block, :failure =>"$('#{design_id_for_block(@design_block)}').innerHTML= request.responseText", :html => {:method => :put}) do  
+##%>
+#
+#          options[:failure] = "$('#{design_id_for_block(@design_block)}').innerHTML= request.responseText" # "alert(request.responseText)"
+##          options[:url].merge!({:controller => @design_block.class.name.underscore, :block_id => @design_block})
+#          options[:url].merge!({:controller => @design_block.class.name.underscore, :block_id => @design_block})
+#          form_remote_tag(options, &block)
+#        end
+
+#<% form_remote_for(@design_block, :failure =>"$('#{design_id_for_block(@design_block)}').innerHTML= request.responseText", :html => {:method => :put}) do  %>
+
+     
+      #FIXME make this test     
+      def design_form_remote_for(options = {},&block) 
+        options[:failure] = "$('#{design_id_for_block(@design_block)}').innerHTML= request.responseText" # "alert(request.responseText)"
+        design_block = self.instance_variable_get('@design_block')
+        form_remote_for(design_block, options, &block)
+      end
+ 
+    end # END OF module BlockHelper
+  end # END OF module Editor
 end #END OF module Design

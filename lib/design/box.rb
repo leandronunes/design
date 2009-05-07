@@ -20,9 +20,11 @@ module Design
     #<tt>number</tt> could not be nil and must be an integer
     validates_numericality_of :number, :only_integer => true
 
-    after_create  do |box|
-      n_boxes = box.owner.boxes.count
-      box.number = n_boxes + 1 
+    before_validation_on_create  do |box|
+      unless box.owner.nil?
+        n_boxes = box.owner.boxes.count
+        box.number ||= n_boxes + 1 
+      end
     end
 
     # Return all blocks of the current box object sorted by the position block

@@ -40,7 +40,8 @@ following elements:
    }
  end
 
-Design will then know that your design has three boxes, each one with a block inside it. To use Design as your layout generator, you just add something like this in aplicattion's layout:
+Design will then know that your design has three boxes, each one with a block inside it. To use Design as your layout
+generator, you just add something like this in aplicattion's layout:
 
  <%= design_display(yield) %>
 
@@ -80,11 +81,13 @@ Imagine we wanna create a block that keep all your favorite links.
 
 To do that we do the steps:
   - mkdir 'app/design_root' #FIXME the plugin can create this folder on instalation
-  - ./script/generate design_block favorite_links. This will generate the block favorite_links on folder 'app/design_blocks'.
+  - ./script/generate design_block favorite_links. This will generate the block favorite_links on folder
+    'app/design_blocks'.
   - Change the template generated. Everything it's fine now ;)
 
 
-Notes: You can change the design_blocks root folder on your environment config file ' config/environment.rb' adding the line.
+Notes: You can change the design_blocks root folder on your environment config file ' config/environment.rb' adding the
+line.
 
   DesignConfiguration.design_blocks_root= 'folder_of_design_blocks_root'
 

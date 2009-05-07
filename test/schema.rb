@@ -3,25 +3,19 @@ ActiveRecord::Migration.verbose = false
 ActiveRecord::Schema.define(:version => 0) do
 
   create_table :design_test_design_boxes, :force => true do |t|
-   t.column :name,    :string
-   t.column :title,    :string
-   t.column :number,   :integer
-   t.column :owner_type, :string
-   t.column :owner_id,  :integer
+    t.string :name, :title, :owner_type
+    t.integer :owner_id, :number
   end
 
   create_table :design_test_design_blocks, :force => true do |t|
-   t.column :name,   :string
-   t.column :title,    :string
-   t.column :box_id,  :integer
-   t.column :position, :integer
-   t.column :type,   :string
-   t.column :helper,   :string
+    t.string :title, :type
+    t.integer :box_id, :position 
+    t.text :settings
   end
  
   create_table :design_test_users, :force => true do |t|
-    t.column :name, :string, :limit => 80
-    t.column :design_data, :text
+    t.string :name, :limit => 80
+    t.text :design_data
   end
  
 end

@@ -180,7 +180,7 @@ module Design
         [
           content_tag(:li,
             link_to_function(
-              content_tag(:span, _('Hide') ),
+              content_tag(:span, t(:design_label_hide) ),
               {},
               {:onclick => visual_effect(:toggle_slide, design_id_for_block_content(block), :duration => 0.5), :class => 'design_button_block button_block_hide'}
             ),
@@ -205,7 +205,7 @@ module Design
         if block.main? || request.xml_http_request?
           action_content
         else
-          render_component(:controller => block.class.name.underscore, :action => 'index', :params => params.merge(:block_id => block.id))
+          render_component(:controller => block.controller_name.underscore, :action => 'index', :params => params.merge(:block_id => block.id))
         end
 
       [
@@ -238,16 +238,6 @@ module Design
     def design_template_javascript_include_tags
       pattern = File.join(DesignConfiguration.public_filesystem_root, DesignConfiguration.design_root, 'templates', design_interface.template, 'javascripts', '*.js')
       javascript_files = Dir.glob(pattern)
-      javascript_filter = [
-       'script.js',
-        params[:controller],
-        params[:controller]+ "_" + params[:action],
-        params[:action],
-      ]
-
-      javascript_files= Dir.glob(pattern).select do |f| 
-        javascript_filter.include?(f.split('/').last) #FIXME We can write a regex that find the end of the expression and look for math
-      end 
 
       return '' if javascript_files.empty?
 
@@ -320,20 +310,9 @@ module Design
         DesignConfiguration.design_root,
         'themes',
           design_interface.theme,
+        'stylesheets',
         '*.css' )
       stylesheet_files = Dir.glob(pattern)
-
-      stylesheet_filter = [
-       'style.css',
-        params[:controller] +'.css',
-        params[:controller] +'_'+ params[:action] +'.css',
-        params[:action] +'.css',
-      ]
-
-      stylesheet_files = Dir.glob(pattern).select do |f| 
-        #stylesheet_filter.include?(f.split('/').last)
-        stylesheet_filter.include? File.basename(f)
-      end
 
       return '' if stylesheet_files.empty?
 
@@ -343,6 +322,7 @@ module Design
             DesignConfiguration.design_root,
             'themes',
             design_interface.theme,
+            'stylesheets',
             File.basename(filename)
           )
         )
@@ -361,17 +341,6 @@ module Design
     def design_icon_theme_stylesheet_link_tags
       pattern = File.join(DesignConfiguration.public_filesystem_root, DesignConfiguration.design_root, 'icons', design_interface.icon_theme, '*.css')
       stylesheet_files = Dir.glob(pattern)
-
-      stylesheet_filter = [
-       'style.css',
-        params[:controller],
-        params[:controller]+ "_" + params[:action],
-        params[:action],
-      ]
-
-      stylesheet_files= Dir.glob(pattern).select do |f|
-        stylesheet_filter.include?(f.split('/').last) #FIXME We can write a regex that find the end of the expression and look for math
-      end
 
       return '' if stylesheet_files.empty?
 
@@ -468,8 +437,7 @@ module Design
     # generates all header tags needed to use the design. The same as calling +design_template_javascript_include_tags+, +design_template_stylesheet_link_tags+ and 'design_theme_stylesheet_link_tags
     def design_all_header_tags
       [
-        javascript_include_tag(:defaults),
-        design_template_javascript_include_tags,
+        # javascript_include_tag(:defaults),
         design_template_stylesheet_link_tags,
         design_theme_stylesheet_link_tags,
         design_icon_theme_stylesheet_link_tags,

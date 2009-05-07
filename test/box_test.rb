@@ -5,12 +5,12 @@ class BoxTest < Test::Unit::TestCase
   include Design
 
   def setup
-    @owner = DesignTestUser.create!(:name => 'my test user')
+    @owner = DesignTestModel.create!(:name => 'my test user')
   end
 
   def teardown
     Box.delete_all
-    DesignTestUser.delete_all
+    DesignTestModel.delete_all
   end
 
   def test_block_should_have_an_owner
@@ -42,7 +42,7 @@ class BoxTest < Test::Unit::TestCase
     b1 = Design::Box.new
     b1.name  = "Some name"
     b1.owner = @owner
-    assert b1.save
+    assert b1.save!
    
     b2 = Design::Box.new
     b2.name= "Another name"
@@ -56,6 +56,21 @@ class BoxTest < Test::Unit::TestCase
     b = Box.new(:number => nil)
     assert !b.valid?
     assert b.errors.invalid?(:number)
+  end
+
+  def test_should_has_many_blocks 
+    b = Box.new
+    assert b.method_exists?(:blocks)
+  end
+
+  def test_should_sort_blocks_by_position
+    b = Box.new
+    block_1 = Block.new(:position => 2)
+    block_2 = Block.new(:position => 3)
+    block_3 = Block.new(:position => 1)
+    b.blocks<<[block_1, block_2, block_3]
+    assert_equal [block_1, block_2, block_3], b.blocks
+    assert_equal [block_3, block_1, block_2], b.blocks_sort_by_position
   end
 
 end

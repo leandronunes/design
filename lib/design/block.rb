@@ -7,9 +7,14 @@ module Design
     set_table_name 'design_blocks'
 
     belongs_to :box
+
+    belongs_to :box, :class_name => "Design::Box", :foreign_key => :box_id 
   
-    #<tt>position</tt> codl not be nil and must be an integer
+    #<tt>position</tt> could not be nil and must be an integer
     validates_numericality_of :position, :only_integer => true
+
+    #<tt>position</tt> could not repeat
+    validates_uniqueness_of :position, :scope => 'box_id'
 
     # A block must be associated to a box
     validates_presence_of :box_id 
@@ -17,26 +22,21 @@ module Design
     # when creating a new block, automatically assign a new position
     before_validation_on_create do |block|
       unless block.box.nil?
-        block.position = (block.box.blocks.map(&:position).max || 0) + 1
+        block.position = (block.box.blocks.maximum(:position) || 0) + 1
       end
     end
 
     serialize :settings, Hash
 
-    def settings
-      self[:settings] ||= {}
-    end
-
     def self.description
       raise "You have to overwrite me"
     end
 
-    # FIXME See why this code didn't works.
-    # If this method works we can erase the settings method defined on this class
-#    def initialize(*args)
-#      super(*args)  
-#      self[:settings] ||= {}
-#    end
+    # Initialize settings as Hash
+    def initialize(*args)
+      super(*args)  
+      self.settings ||= {}
+    end
 
     # This method always return false excepted when redefined by the MainBlock class. It mean the current block it's not the result of a
     # controller action.
@@ -51,7 +51,7 @@ module Design
     #
     # The default value is true
     def display_title
-      self.settings[:display_title] ||= 'false' 
+      self.settings[:display_title] ||= 'true'
     end  
 
     def display_title?
@@ -76,6 +76,26 @@ module Design
     def display_header= value
       self.settings[:display_header] =  value.to_s == 'true' ? 'true' : 'false'
     end  
+
+    #FIXME make this test
+    # Returns the name of the controller associated with the block
+    # EX:
+    #   BlockName
+    def controller_name
+      self.class.name.pluralize
+    end
+
+    #FIXME make this test
+    # Returns the full name of the controller associated with the block
+    # EX:
+    #   BlockNameController
+    def controller_full_name
+      self.class.name.pluralize + 'Controller'
+    end
+  
+    def member_link(action = nil)
+      "#{action.nil? ? '' : action + '_'}#{self.class.name.underscore}_path"
+    end 
 
   end
 
