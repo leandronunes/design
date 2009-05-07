@@ -1,0 +1,9 @@
+Description:
+    Generate the design plugin migration needed by plugin.
+    After run this generator run "rake db:migrate" command.
+
+Example:
+    ./script/generate design_migration
+
+    This will create:
+        db/migrate/[0-9]+_design_migration.rb

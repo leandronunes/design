@@ -1,0 +1,7 @@
+<h2><%= t(:label_change_icon_theme) %></h2>
+
+<div>
+<% for icon_theme in @icon_themes do %>
+    <%= link_to(design_thumbnail_for(icon_theme), { :action => :design_editor_set_icon_theme, :icon_theme => icon_theme.name}, :method => :get) %>
+<% end %>
+</div>

@@ -1,0 +1,7 @@
+<h2><%= t(:text_change_template) %></h2>
+
+<div>
+<% for template in @templates do %>
+    <%= link_to(design_thumbnail_for(template), { :action => :design_editor_set_template, :template => template.name}, :method => :get) %>
+<% end %>
+</div>

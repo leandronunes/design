@@ -1,0 +1,7 @@
+<h2><%= t(:label_change_block_theme) %></h2>
+
+<div>
+<% for theme in @themes do %>
+    <%= link_to(design_thumbnail_for(theme), { :action => :design_editor_set_theme, :theme => theme.name }, :method => :get) %>
+<% end %>
+</div>
