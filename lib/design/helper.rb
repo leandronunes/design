@@ -317,6 +317,7 @@ module Design
       return '' if stylesheet_files.empty?
 
       stylesheet_files.map do |filename|
+				media = File.basename(filename).match('^print\.css').nil? ? 'screen' : 'print'
         stylesheet_link_tag(
           '/'+ File.join(
             DesignConfiguration.design_root,
@@ -324,7 +325,8 @@ module Design
             design_interface.theme,
             'stylesheets',
             File.basename(filename)
-          )
+          ),
+					:media => media
         )
       end.join("\n") 
 
