@@ -30,13 +30,12 @@ module Design
     module ClassMethods
       def acts_as_design(config = {})
         send :include, InstanceMethods
-        
         @design_root = config[:root]
         @public_filesystem_root = config[:filesystem]
         DesignConfiguration.design_root = @design_root if DesignConfiguration.design_root_default == DesignConfiguration.design_root
-    
+
         DesignConfiguration.public_filesystem_root = @public_filesystem_root
-    
+
         has_many :boxes, :class_name => Design::Box.name, :as => :owner, :dependent => :destroy
 
         serialize :design_data
@@ -48,19 +47,19 @@ module Design
             design.boxes << Design::Box.new(:name => "Box %s" % n, :number => n)
           end
         end
-  
+
         after_create do |design|
           d = Design::MainBlock.new
           design.boxes.first.blocks << d
         end
-  #
-  #      def self.design_root
-  #        @design_root
-  #      end
-  #
-  #      def self.public_filesystem_root
-  #        @public_filesystem_root
-  #      end
+
+        def self.design_root
+          @design_root
+        end
+
+        def self.public_filesystem_root
+          @public_filesystem_root
+        end
       end
     end
 
