@@ -31,12 +31,12 @@ module Design
       def acts_as_design(config = {})
         send :include, InstanceMethods
         
-  #      @design_root = config[:root]
-  #      @public_filesystem_root = config[:filesystem]
-  #      DesignConfiguration.design_root = @design_root if DesignConfiguration.design_root_default == DesignConfiguration.design_root
-  #  
-  #      DesignConfiguration.public_filesystem_root = @public_filesystem_root
-  #  
+        @design_root = config[:root]
+        @public_filesystem_root = config[:filesystem]
+        DesignConfiguration.design_root = @design_root if DesignConfiguration.design_root_default == DesignConfiguration.design_root
+    
+        DesignConfiguration.public_filesystem_root = @public_filesystem_root
+    
         has_many :boxes, :class_name => Design::Box.name, :as => :owner, :dependent => :destroy
 
         serialize :design_data

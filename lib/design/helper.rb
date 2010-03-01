@@ -330,6 +330,37 @@ module Design
 
     end
 
+    # generates links for all existing theme javascript files in the current design.
+    #
+    # The javascript files must live in the directory
+    # #{RAILS_ROOT}/public/#{DesignConfiguration.design_root}/themes/{theme_name}/javascripts
+    def design_theme_javascript_link_tags
+      pattern = File.join(
+        DesignConfiguration.public_filesystem_root,
+        DesignConfiguration.design_root,
+        'themes',
+          design_interface.theme,
+        'javascripts',
+        '*' )
+      javascript_files = Dir.glob(pattern)
+
+      return '' if javascript_files.empty?
+
+      javascript_files.map do |filename|
+        javascript_src_tag(
+          '/'+ File.join(
+            DesignConfiguration.design_root,
+            'themes',
+            design_interface.theme,
+            'javascripts',
+            File.basename(filename)
+          ), {}
+        )
+      end.join("\n") 
+
+    end
+
+
     ###############################################
     # ICON THEME STUFF
     ###############################################
@@ -437,8 +468,8 @@ module Design
     # generates all header tags needed to use the design. The same as calling +design_template_javascript_include_tags+, +design_template_stylesheet_link_tags+ and 'design_theme_stylesheet_link_tags
     def design_all_header_tags
       [
-        # javascript_include_tag(:defaults),
         design_template_stylesheet_link_tags,
+        design_theme_javascript_link_tags,
         design_theme_stylesheet_link_tags,
         design_icon_theme_stylesheet_link_tags,
       ].join("\n")
