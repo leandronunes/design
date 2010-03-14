@@ -337,6 +337,10 @@ module Design
     # The javascript files must live in the directory
     # #{RAILS_ROOT}/public/#{DesignConfiguration.design_root}/themes/{theme_name}/javascripts
     def design_theme_javascript_link_tags
+      javascript_files = []
+      
+      javascript_files = theme_option(:js).collect{ |x| x + ".js" } unless theme_option(:js).nil?
+      
       pattern = File.join(
         DesignConfiguration.public_filesystem_root,
         DesignConfiguration.design_root,
@@ -344,7 +348,9 @@ module Design
           design_interface.theme,
         'javascripts',
         '*' )
-      javascript_files = Dir.glob(pattern)
+      Dir.glob(pattern).each do |js_file|
+        javascript_files << js_file unless javascript_files.include?(File.basename(js_file))
+      end
 
       return '' if javascript_files.empty?
 
@@ -355,13 +361,21 @@ module Design
             'themes',
             design_interface.theme,
             'javascripts',
-            File.basename(filename)
+            filename
           ), {}
         )
       end.join("\n") 
 
     end
 
+    def theme_option(opt = 'name')
+      conf = File.join(DesignConfiguration.public_filesystem_root, DesignConfiguration.design_root, 'themes', design_interface.theme, 'theme.yml')
+      if File.exists?(conf)
+        opt ? YAML.load_file(conf)[opt.to_s()] : YAML.load_file(conf)
+      else
+        nil
+      end
+    end
 
     ###############################################
     # ICON THEME STUFF
